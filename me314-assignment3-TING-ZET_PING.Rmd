@@ -1,0 +1,158 @@
+
+# ME314 Managing and Visualizing Data
+
+## Day 3 Assignment, LSE ME314 2018
+---
+
+```{r}
+format_with_col = function(x, color){
+  if(knitr::is_latex_output())
+    paste("\\textcolor{",color,"}{",x,"}",sep="")
+  else if(knitr::is_html_output())
+    paste("<font color='",color,"'>",x,"</font>",sep="")
+  else
+    x
+}
+```
+
+### 1.  Normalizing data
+
+This question uses this table:
+![Not normalized data](http://www.essentialsql.com/wp-content/uploads/2014/06/Intro-Table-Not-Normalized.png)
+
+from the lecture notes.  For each answer, please explain as fully as possible, and feel free to use tables or diagrams if you prefer.
+
+a)  Why does this table violate the first normal form, and what would be required to make it 1NF?
+```{r echo=T, results='hide'}
+print("Attributes Customer1:3 violate 1NF because these 3 form a group of attributes.  ")
+```
+
+b)  What additional steps would be needed to make the table 2NF, and why?
+```{r echo=T, results='hide'}
+print("To make the table 2NF, we'll have to remove attributes OfficeNumber, Customer1, Customer2, Customer3")
+```
+
+c)  Why might we not want to normalize data to the fullest extent possible?
+```{r echo=T, results='hide'}
+print("Reducing database to the fullest extent i.e. 7th Normal Form will often overly complicate simple retrieval and understanding of data. Casting all data into irreducible forms require more tables than is efficient for operations. ")
+```
+
+d)  In the table below, which of the three normalization rules does this violate, if any, and why?
+
+   |  countryID  |  countryName    |   EUmember   |  EUjoindate  |
+   | -----------:|:----------------|:------------:|:------------:|
+   | 00001       | France          |  `true`      |  1958-01-01  |
+   | 00004       | Hungary         |  `true`      |  2004-05-01  |
+   | 00003       | Serbia          |  `false`     |       `NULL` |
+   | 00004       | Finland         |  `true`      |  1995-01-01  |
+   | 00005       | Russia          |  `false`     |       `NULL` |
+   | 00006       | Ireland, UK     |  `true`      |  1973-01-01  |
+
+   Are there any other problems with the table, besides normalization?
+
+```{r echo=T, results='hide'}
+print("This table is not in normal form 1. Attribute countryName violates NF1 because it contains non-atomic values such as 'Ireland, UK'. ")
+```
+
+e)  What would it take to full (1NF-3NF) normalize this dataset?
+
+   Write out these tables, and describe why this meets each of the normal forms.  This is a database of movies watched on NetBricks, a streaming movie service.
+
+   | Name           | Address    |   Movies Rented   |  Salutation  | Category |
+   |:---------------|:-----------|:------------------|:------------:|----------|
+   | Bob Smith      | 1 Houghton Street    | _Star Wars_, _Inception_ |  Dr.   |  Scifi, Scifi |
+   | Pry Ministair  | 10 Downing St     |  _Brexit the Movie_      |  Lady  | Tragedy |
+   | Joe Bloggs     | 8 Myhatt St.      |  _Fast and Furious 6_, _Fast and Furious 7_     | Mr. | Action, Action |
+
+
+```{r echo=T, results='hide'}
+print("To get to NF1, one would have to melt the data on attributes Movies Rented, and then on Category. Once in NF1, NF2 is also satisfied. NF3 requires that Movies Rented and Category be removed. ")
+```
+
+### 2.  Reshaping data
+
+For this exercise, we will use the **nycflights13** R package, whose tables have been output in `.csv` form [here](nycflights13/).  You may do the following in either R or Python.  Note that this example is developed extensively in [_R for Data Science_](http://r4ds.had.co.nz/relational-data.html).
+
+a)  Create a subtable of the `flights` data, that departed before 05:53 on 2013-02-28.  How many rows and columns does this subtable have?  
+
+```{r}
+library("dplyr")
+library("lubridate")
+
+flights <- read.csv("nycflights13/flights.csv")
+
+flights$dep_datetime <- ymd_hm(sprintf("%s-%02d-%02d %02d:%02d",
+                            flights$year,
+                            flights$month,
+                            flights$day,
+                            flights$hour,
+                            flights$minute))
+flights_sub <- subset(flights, dep_datetime < ymd_hm("2013-02-28 05:53"))
+
+cat("number of row of `flights_sub is`", nrow(flights_sub))
+cat("number of columns of `flights_sub` is", ncol(flights_sub))
+```
+
+b)  Merge or join the subtable from a. `flights` data, to produce a result that includes:  
+   *  Departure time
+   *  Carrier (two digit code, from `carrier`)
+   *  Flight number
+   *  Destination airport name (hint: you will need to get this from the `airports` table)  
+
+```{r}
+## TODO THis one is false!
+airports <- read.csv("nycflights13/airports.csv")
+mergedinfo <- flights %>% 
+                  inner_join(airports, c("dest" ="faa"))
+```
+
+c) **(optional)** For every airline that had flights in the `flights` data compute the average age of the planes it flew from the entire dataset.  Age here will be defined as 2013 minus the `year` variable from the `planes` data.  Hint: This involves a join operation on `tailnum`, but also a grouped mean to compute the age (and subtracting 2013, which you can do before or after the computation of the mean).
+
+
+```{r}
+## your code
+```
+
+### 3.  Working with SQL
+
+a)  Create a relational dataset in SQLite using the `.csv` data found [here](nycflights13/).  Name each table so that it matches the base filenames of the input data.  You can use DB Browser for this, but describe how you did it, but the answer will use the R package [RSQLite](https://cran.r-project.org/web/packages/RSQLite/RSQLite.pdf). 
+```{r}
+library(RSQLite)
+
+# first read the data
+setwd("nycflights13/")
+temp = list.files(pattern="*.csv")
+# make names from all the csv files then assign read.csv to each. Write output to Global Environment
+list2env(
+  lapply(setNames(temp, make.names(gsub("*.csv$", "", temp))), 
+         read.csv), envir = .GlobalEnv)
+
+# then connect to db
+library(DBI)
+# Initialize a temporary in memory database and copy a data.frame into it
+con <- dbConnect(RSQLite::SQLite(), ":memory:")
+
+# create tables
+# TODO use `mapply` for this!!!!
+dbWriteTable(con, "airports", airports)
+dbWriteTable(con, "airlines", airlines)
+dbWriteTable(con, "flights", flights)
+dbWriteTable(con, "planes", planes)
+dbWriteTable(con, "weather", weather)
+#sample: dbWriteTable(con, "USArrests", USArrests)
+dbListTables(con)
+setwd('..')
+```
+
+b)  Replicate B2 above using an SQL query, including both the command and the output.
+```{}
+
+```
+
+c) **(optional)** Replicate B3 above using an SQL query, including both the command and the output.
+
+
+```{r}
+dbDisconnect(con)
+```
+[your answer]
