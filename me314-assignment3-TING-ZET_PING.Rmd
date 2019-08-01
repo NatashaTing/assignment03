@@ -4,7 +4,7 @@
 ## Day 3 Assignment, LSE ME314 2018
 ---
 
-```{r}
+```{r, results='hide'}
 format_with_col = function(x, color){
   if(knitr::is_latex_output())
     paste("\\textcolor{",color,"}{",x,"}",sep="")
@@ -22,14 +22,28 @@ This question uses this table:
 
 from the lecture notes.  For each answer, please explain as fully as possible, and feel free to use tables or diagrams if you prefer.
 
+
 a)  Why does this table violate the first normal form, and what would be required to make it 1NF?
 ```{r echo=T, results='hide'}
 print("Attributes Customer1:3 violate 1NF because these 3 form a group of attributes.  ")
 ```
 
+**The rules to satisfy 1st normal form are:**
+-  **That the data is in a database table.**
+-  **The table stores information in rows and columns where one or more columns, called the primary key, uniquely identify each row.**
+-  **Each column contains atomic values, and there are not repeating groups of columns.**
+
+**This table violates the 1NF because it contains data customer data in more than one column, in this case, `Customer1`, `Customer2`, and `Customer3`.**
+
+**We could solve this by moving the Customer information to its own table, and linking its primary key to a matching foreign key in the original table related to SalesStaff.**
+
+**See [this website](https://www.essentialsql.com/get-ready-to-learn-sql-8-database-first-normal-form-explained-in-simple-english/) for more details.**
+
+
 b)  What additional steps would be needed to make the table 2NF, and why?
 ```{r echo=T, results='hide'}
 print("To make the table 2NF, we'll have to remove attributes OfficeNumber, Customer1, Customer2, Customer3")
+print("Assuming that we have fixed the table into NF1, there are still issues. For example, as long as we know the name of sales office, we can know the sales office's phone number. This violates NF2 principles. ")
 ```
 
 c)  Why might we not want to normalize data to the fullest extent possible?
@@ -53,6 +67,10 @@ d)  In the table below, which of the three normalization rules does this violate
 ```{r echo=T, results='hide'}
 print("This table is not in normal form 1. Attribute countryName violates NF1 because it contains non-atomic values such as 'Ireland, UK'. ")
 ```
+**Also, from answers: **
+-  **2NF is violated because we could have created a table of EU membership statuses (including soon, sadly, un-joining) that would link to the Country table via `CountryID`.**
+-  **3NF is violates because the `EUmember` can be determined by whether the `EUjoindate` is not `NULL`.**
+
 
 e)  What would it take to full (1NF-3NF) normalize this dataset?
 
@@ -93,12 +111,28 @@ cat("number of row of `flights_sub is`", nrow(flights_sub))
 cat("number of columns of `flights_sub` is", ncol(flights_sub))
 ```
 
+```{r}
+# difference between sprintf and paste
+#TODO why dep_time not found?
+flights_sub <- flights %>% subset(year==2013, 
+                                  month==2, 
+                                  day=28, 
+                                  dep_time<553)
+
+# or use dplyr filter
+flights_sub2 <- flights %>% 
+            dplyr::filter(year==2013 & month==2 & day==28 & dep_time<553)
+
+# this creates an intermediatary column that we'll have to drop later. not ideal
+flights_sub3 <- flights %>% 
+            dplyr::mutate(., after_2013 = year >2013)
+```
+
 b)  Merge or join the subtable from a. `flights` data, to produce a result that includes:  
    *  Departure time
    *  Carrier (two digit code, from `carrier`)
    *  Flight number
    *  Destination airport name (hint: you will need to get this from the `airports` table)  
-
 ```{r}
 ## TODO THis one is false!
 airports <- read.csv("nycflights13/airports.csv")
@@ -107,7 +141,6 @@ mergedinfo <- flights %>%
 ```
 
 c) **(optional)** For every airline that had flights in the `flights` data compute the average age of the planes it flew from the entire dataset.  Age here will be defined as 2013 minus the `year` variable from the `planes` data.  Hint: This involves a join operation on `tailnum`, but also a grouped mean to compute the age (and subtracting 2013, which you can do before or after the computation of the mean).
-
 
 ```{r}
 ## your code
@@ -145,11 +178,32 @@ setwd('..')
 ```
 
 b)  Replicate B2 above using an SQL query, including both the command and the output.
-```{}
+```{r}
+#   b)  Merge or join the subtable from a. `flights` data, to produce a result that includes:  
+#   *  Departure time
+#   *  Carrier (two digit code, from `carrier`)
+#   *  Flight number
+#   *  Destination airport name (hint: you will need to get this from the `airports` table)  
 
+query <- dbSendQuery(con, statement = "SELECT dep_time, carrier, flight, name 
+                                       from flights
+                                       LEFT JOIN airports 
+                                       on flights.dest = airports.faa ;")
+ d1 <- dbFetch(query, n = 15)
+ d1
+
+qoutput <- dbGetQuery(con, statement = "SELECT dep_time, carrier, flight, name 
+                              from flights 
+                              LEFT JOIN airports 
+                              on flights.dest = airports.faa ;")
+print(qoutput)
 ```
 
 c) **(optional)** Replicate B3 above using an SQL query, including both the command and the output.
+
+```{r}
+temp <- dbGetQuery(con, "SELECT ")
+```
 
 
 ```{r}
