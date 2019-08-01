@@ -1,11 +1,14 @@
 
 # ME314 Managing and Visualizing Data
 
+```{r}
+library(dplyr)
+```
 ## Day 3 Assignment, LSE ME314 2018
 ---
 
-```{r, results='hide'}
-format_with_col = function(x, color){
+```{r, include=FALSE, results='hide'}
+txtCol = function(x, color){
   if(knitr::is_latex_output())
     paste("\\textcolor{",color,"}{",x,"}",sep="")
   else if(knitr::is_html_output())
@@ -14,6 +17,8 @@ format_with_col = function(x, color){
     x
 }
 ```
+
+
 
 ### 1.  Normalizing data
 
@@ -24,31 +29,28 @@ from the lecture notes.  For each answer, please explain as fully as possible, a
 
 
 a)  Why does this table violate the first normal form, and what would be required to make it 1NF?
-```{r echo=T, results='hide'}
-print("Attributes Customer1:3 violate 1NF because these 3 form a group of attributes.  ")
-```
+**Ans1**: Attributes Customer1:3 violate 1NF because these 3 form a group of attributes.
 
-**The rules to satisfy 1st normal form are:**
+*Correction*: The rules to satisfy 1st normal form are:_
 -  **That the data is in a database table.**
 -  **The table stores information in rows and columns where one or more columns, called the primary key, uniquely identify each row.**
--  **Each column contains atomic values, and there are not repeating groups of columns.**
-
-**This table violates the 1NF because it contains data customer data in more than one column, in this case, `Customer1`, `Customer2`, and `Customer3`.**
-
-**We could solve this by moving the Customer information to its own table, and linking its primary key to a matching foreign key in the original table related to SalesStaff.**
-
-**See [this website](https://www.essentialsql.com/get-ready-to-learn-sql-8-database-first-normal-form-explained-in-simple-english/) for more details.**
+-  **Each column contains atomic values, and there are not repeating groups of columns.**}}
 
 
 b)  What additional steps would be needed to make the table 2NF, and why?
+**Ans_b : ** To make the table 2NF, we'll have to remove attributes OfficeNumber, Customer1, Customer2, Customer3
+
 ```{r echo=T, results='hide'}
-print("To make the table 2NF, we'll have to remove attributes OfficeNumber, Customer1, Customer2, Customer3")
+# correction
 print("Assuming that we have fixed the table into NF1, there are still issues. For example, as long as we know the name of sales office, we can know the sales office's phone number. This violates NF2 principles. ")
 ```
 
 c)  Why might we not want to normalize data to the fullest extent possible?
+**Ans_b : ** Reducing database to the fullest extent i.e. 7th Normal Form will often overly complicate simple retrieval and understanding of data. Casting all data into irreducible forms require more tables than is efficient for operations. 
+
 ```{r echo=T, results='hide'}
-print("Reducing database to the fullest extent i.e. 7th Normal Form will often overly complicate simple retrieval and understanding of data. Casting all data into irreducible forms require more tables than is efficient for operations. ")
+# correction
+print("this is true for smaller databases. For large scale database scheme that need the ability to be extended easily, however, and for which data integrity is critical, full normalization is generally the best strategy.")
 ```
 
 d)  In the table below, which of the three normalization rules does this violate, if any, and why?
@@ -64,13 +66,13 @@ d)  In the table below, which of the three normalization rules does this violate
 
    Are there any other problems with the table, besides normalization?
 
-```{r echo=T, results='hide'}
-print("This table is not in normal form 1. Attribute countryName violates NF1 because it contains non-atomic values such as 'Ireland, UK'. ")
-```
-**Also, from answers: **
--  **2NF is violated because we could have created a table of EU membership statuses (including soon, sadly, un-joining) that would link to the Country table via `CountryID`.**
--  **3NF is violates because the `EUmember` can be determined by whether the `EUjoindate` is not `NULL`.**
 
+**Ans : ** This table is not in normal form 1. Attribute countryName violates NF1 because it contains non-atomic values such as 'Ireland, UK'. 
+```{r echo=T, results='hide'}
+# correction
+print("2NF is violated because we could have created a table of EU membership statuses (including soon, sadly, un-joining) that would link to the Country table via `CountryID`.")
+print("3NF is violates because the `EUmember` can be determined by whether the `EUjoindate` is not `NULL`.")
+```
 
 e)  What would it take to full (1NF-3NF) normalize this dataset?
 
@@ -82,11 +84,34 @@ e)  What would it take to full (1NF-3NF) normalize this dataset?
    | Pry Ministair  | 10 Downing St     |  _Brexit the Movie_      |  Lady  | Tragedy |
    | Joe Bloggs     | 8 Myhatt St.      |  _Fast and Furious 6_, _Fast and Furious 7_     | Mr. | Action, Action |
 
+**Ans: ** To get to NF1, one would have to melt the data on attributes Movies Rented, and then on Category. Once in NF1, NF2 is also satisfied. NF3 requires that Movies Rented and Category be removed. 
 
-```{r echo=T, results='hide'}
-print("To get to NF1, one would have to melt the data on attributes Movies Rented, and then on Category. Once in NF1, NF2 is also satisfied. NF3 requires that Movies Rented and Category be removed. ")
+```{r}
+# create user table
+user_table <- read.csv(textConnection("userid, Name, Address, Salutation
+                                      1, Bob Smith, 1 Houghton Street, Dr. 
+                                      2, Pry Ministair, 10 Downing St, Lady
+                                      3, Joe Bloggs, 8 Myhatt St., Mr."),           stringsAsFactors=FALSE)
+
+# create Movies table
+# do not add rented_by = c("Bob Smith", "Bob Smith", 
+#                       "Pry Ministair", "Joe Bloggs", "Joe Blogss") here
+movies_table <- data.frame(movieid = 1:5, 
+                           movies = c("Star Wars", "Inception", 
+                                      "Brexit the Movie", "Fast_ and Furious 6", 
+                                      "Fast and Furious 7"), 
+                           category_id = c(1, 1, 2, 3, 3))
+
+# create rental table
+rental_table <- data.frame(userid = c(1,1,2,3,3), 
+                           movieid = 1:5)
+
+# create category table 
+category_table <- data.frame(category_id = 1:3,
+                             category_name = c("Scifi", "Tragedy", "Action"), 
+                             stringsAsFactors = FALSE)
+
 ```
-
 ### 2.  Reshaping data
 
 For this exercise, we will use the **nycflights13** R package, whose tables have been output in `.csv` form [here](nycflights13/).  You may do the following in either R or Python.  Note that this example is developed extensively in [_R for Data Science_](http://r4ds.had.co.nz/relational-data.html).
@@ -94,6 +119,7 @@ For this exercise, we will use the **nycflights13** R package, whose tables have
 a)  Create a subtable of the `flights` data, that departed before 05:53 on 2013-02-28.  How many rows and columns does this subtable have?  
 
 ```{r}
+
 library("dplyr")
 library("lubridate")
 
@@ -109,41 +135,80 @@ flights_sub <- subset(flights, dep_datetime < ymd_hm("2013-02-28 05:53"))
 
 cat("number of row of `flights_sub is`", nrow(flights_sub))
 cat("number of columns of `flights_sub` is", ncol(flights_sub))
+
 ```
 
 ```{r}
-# difference between sprintf and paste
-#TODO why dep_time not found?
-flights_sub <- flights %>% subset(year==2013, 
-                                  month==2, 
-                                  day=28, 
+
+flights_sub <- flights %>% subset(year==2013 & # when use subset must sep conditions w `&`
+                                  month==2 &
+                                  day==28 &
                                   dep_time<553)
 
 # or use dplyr filter
 flights_sub2 <- flights %>% 
-            dplyr::filter(year==2013 & month==2 & day==28 & dep_time<553)
+            dplyr::filter(year==2013 &  # when use dplyr::filter can sep with ","
+                             month==2 & 
+                             day==28 & 
+                             dep_time<553)
 
 # this creates an intermediatary column that we'll have to drop later. not ideal
 flights_sub3 <- flights %>% 
             dplyr::mutate(., after_2013 = year >2013)
+
 ```
 
-b)  Merge or join the subtable from a. `flights` data, to produce a result that includes:  
+b)  Merge or join the subtable from a. `flights` data, to produce a result that includes: 
    *  Departure time
    *  Carrier (two digit code, from `carrier`)
    *  Flight number
    *  Destination airport name (hint: you will need to get this from the `airports` table)  
 ```{r}
-## TODO THis one is false!
+
 airports <- read.csv("nycflights13/airports.csv")
 mergedinfo <- flights %>% 
-                  inner_join(airports, c("dest" ="faa"))
+                  left_join(airports, c("dest" ="faa"))
+# will produce warning  "Column `dest`/`faa` joining factors with different levels, coercing to character vector"
+# but doesn't matter 
+
 ```
 
 c) **(optional)** For every airline that had flights in the `flights` data compute the average age of the planes it flew from the entire dataset.  Age here will be defined as 2013 minus the `year` variable from the `planes` data.  Hint: This involves a join operation on `tailnum`, but also a grouped mean to compute the age (and subtracting 2013, which you can do before or after the computation of the mean).
 
 ```{r}
-## your code
+library(dplyr)
+planes <- read.csv("nycflights13/planes.csv")
+
+# below attempt failed. 
+# flights %>% 
+#   filtered(!duplicated(tailnum)) %>% 
+#   inner_join(flights, by="tailnum") %>% 
+#   mean(2013 - year) %>%
+#   group_by(c("carrier"))
+   
+
+temp <- flights %>% 
+   filter(!duplicated(tailnum)) %>%
+   select(c("tailnum", "carrier")) %>% 
+   left_join(planes, by="tailnum")
+
+airlines <- read.csv("nycflights13/airlines.csv")
+
+temp %>% 
+   group_by(carrier) %>%
+   summarise(mean_age = mean(2013 - year, na.rm=TRUE)) %>% 
+   left_join(airlines, by="carrier") %>%
+   select(c("name", "mean_age"))
+
+temp %>% 
+   group_by(carrier) %>%
+   summarise(mean_age = mean(2013 - year, na.rm=TRUE))
+
+# NT: try this thing using mutate 
+temp %>%
+   group_by(carrier) %>%
+   dplyr::mutate(mean(2013-year, na.rm=TRUE)) %>% 
+   select(c("mean(2013 - year, na.rm = TRUE)"))
 ```
 
 ### 3.  Working with SQL
@@ -185,28 +250,40 @@ b)  Replicate B2 above using an SQL query, including both the command and the ou
 #   *  Flight number
 #   *  Destination airport name (hint: you will need to get this from the `airports` table)  
 
+# can use dbSendQuery + dbFetch 
 query <- dbSendQuery(con, statement = "SELECT dep_time, carrier, flight, name 
                                        from flights
                                        LEFT JOIN airports 
                                        on flights.dest = airports.faa ;")
  d1 <- dbFetch(query, n = 15)
- d1
+ dim(d1)
 
+ # or can use dbGetQuery
 qoutput <- dbGetQuery(con, statement = "SELECT dep_time, carrier, flight, name 
                               from flights 
                               LEFT JOIN airports 
                               on flights.dest = airports.faa ;")
-print(qoutput)
+
 ```
 
 c) **(optional)** Replicate B3 above using an SQL query, including both the command and the output.
+_c) **(optional)** For every airline that had flights in the `flights` data compute the average age of the planes it flew from the entire dataset.  Age here will be defined as 2013 minus the `year` variable from the `planes` data.  Hint: This involves a join operation on `tailnum`, but also a grouped mean to compute the age (and subtracting 2013, which you can do before or after the computation of the mean)._
 
 ```{r}
-temp <- dbGetQuery(con, "SELECT ")
+# remember to use SELECT DISTINCt for correct number
+# I used AVG(2013-year) which is the same with 2013 - (AVG(planes.year)) apparently
+tempsql <- dbGetQuery(con, "SELECT carrier, AVG(2013-year) AS avg_age FROM 
+                  (SELECT DISTINCT tailnum, carrier FROM flights) AS fl
+                   LEFT OUTER JOIN planes as pl ON fl.tailnum = pl.tailnum 
+                  GROUP BY fl.carrier ")
+
+tempsql
 ```
 
 
 ```{r}
 dbDisconnect(con)
 ```
-[your answer]
+
+
+[ANSWER ENDS]

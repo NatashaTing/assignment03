@@ -379,32 +379,35 @@ $(document).ready(function () {
 
 <div id="me314-managing-and-visualizing-data" class="section level1">
 <h1>ME314 Managing and Visualizing Data</h1>
+<pre class="r"><code>library(dplyr)</code></pre>
+<pre><code>## 
+## Attaching package: 'dplyr'</code></pre>
+<pre><code>## The following objects are masked from 'package:stats':
+## 
+##     filter, lag</code></pre>
+<pre><code>## The following objects are masked from 'package:base':
+## 
+##     intersect, setdiff, setequal, union</code></pre>
 <div id="day-3-assignment-lse-me314-2018" class="section level2">
 <h2>## Day 3 Assignment, LSE ME314 2018</h2>
-<pre class="r"><code>format_with_col = function(x, color){
-  if(knitr::is_latex_output())
-    paste(&quot;\\textcolor{&quot;,color,&quot;}{&quot;,x,&quot;}&quot;,sep=&quot;&quot;)
-  else if(knitr::is_html_output())
-    paste(&quot;&lt;font color='&quot;,color,&quot;'&gt;&quot;,x,&quot;&lt;/font&gt;&quot;,sep=&quot;&quot;)
-  else
-    x
-}</code></pre>
 <div id="normalizing-data" class="section level3">
 <h3>1. Normalizing data</h3>
 <p>This question uses this table: <img src="data:image/png;base64,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" alt="Not normalized data" /></p>
 <p>from the lecture notes. For each answer, please explain as fully as possible, and feel free to use tables or diagrams if you prefer.</p>
 <ol style="list-style-type: lower-alpha">
-<li>Why does this table violate the first normal form, and what would be required to make it 1NF?</li>
+<li>Why does this table violate the first normal form, and what would be required to make it 1NF? <strong>Ans1</strong>: Attributes Customer1:3 violate 1NF because these 3 form a group of attributes.</li>
 </ol>
-<pre class="r"><code>print(&quot;Attributes Customer1:3 violate 1NF because these 3 form a group of attributes.  &quot;)</code></pre>
+<p><em>Correction</em>: The rules to satisfy 1st normal form are:_ - <strong>That the data is in a database table.</strong> - <strong>The table stores information in rows and columns where one or more columns, called the primary key, uniquely identify each row.</strong> - <strong>Each column contains atomic values, and there are not repeating groups of columns.</strong>}}</p>
 <ol start="2" style="list-style-type: lower-alpha">
-<li>What additional steps would be needed to make the table 2NF, and why?</li>
+<li>What additional steps would be needed to make the table 2NF, and why? <strong>Ans_b : </strong> To make the table 2NF, we’ll have to remove attributes OfficeNumber, Customer1, Customer2, Customer3</li>
 </ol>
-<pre class="r"><code>print(&quot;To make the table 2NF, we'll have to remove attributes OfficeNumber, Customer1, Customer2, Customer3&quot;)</code></pre>
+<pre class="r"><code># correction
+print(&quot;Assuming that we have fixed the table into NF1, there are still issues. For example, as long as we know the name of sales office, we can know the sales office's phone number. This violates NF2 principles. &quot;)</code></pre>
 <ol start="3" style="list-style-type: lower-alpha">
-<li>Why might we not want to normalize data to the fullest extent possible?</li>
+<li>Why might we not want to normalize data to the fullest extent possible? <strong>Ans_b : </strong> Reducing database to the fullest extent i.e. 7th Normal Form will often overly complicate simple retrieval and understanding of data. Casting all data into irreducible forms require more tables than is efficient for operations.</li>
 </ol>
-<pre class="r"><code>print(&quot;Reducing database to the fullest extent i.e. 7th Normal Form will often overly complicate simple retrieval and understanding of data. Casting all data into irreducible forms require more tables than is efficient for operations. &quot;)</code></pre>
+<pre class="r"><code># correction
+print(&quot;this is true for smaller databases. For large scale database scheme that need the ability to be extended easily, however, and for which data integrity is critical, full normalization is generally the best strategy.&quot;)</code></pre>
 <ol start="4" style="list-style-type: lower-alpha">
 <li>In the table below, which of the three normalization rules does this violate, if any, and why?</li>
 </ol>
@@ -457,7 +460,10 @@ $(document).ready(function () {
 </tbody>
 </table>
 <p>Are there any other problems with the table, besides normalization?</p>
-<pre class="r"><code>print(&quot;This table is not in normal form 1. Attribute countryName violates NF1 because it contains non-atomic values such as 'Ireland, UK'. &quot;)</code></pre>
+<p><strong>Ans : </strong> This table is not in normal form 1. Attribute countryName violates NF1 because it contains non-atomic values such as ‘Ireland, UK’.</p>
+<pre class="r"><code># correction
+print(&quot;2NF is violated because we could have created a table of EU membership statuses (including soon, sadly, un-joining) that would link to the Country table via `CountryID`.&quot;)
+print(&quot;3NF is violates because the `EUmember` can be determined by whether the `EUjoindate` is not `NULL`.&quot;)</code></pre>
 <ol start="5" style="list-style-type: lower-alpha">
 <li>What would it take to full (1NF-3NF) normalize this dataset?</li>
 </ol>
@@ -503,7 +509,30 @@ $(document).ready(function () {
 </tr>
 </tbody>
 </table>
-<pre class="r"><code>print(&quot;To get to NF1, one would have to melt the data on attributes Movies Rented, and then on Category. Once in NF1, NF2 is also satisfied. NF3 requires that Movies Rented and Category be removed. &quot;)</code></pre>
+<p><strong>Ans: </strong> To get to NF1, one would have to melt the data on attributes Movies Rented, and then on Category. Once in NF1, NF2 is also satisfied. NF3 requires that Movies Rented and Category be removed.</p>
+<pre class="r"><code># create user table
+user_table &lt;- read.csv(textConnection(&quot;userid, Name, Address, Salutation
+                                      1, Bob Smith, 1 Houghton Street, Dr. 
+                                      2, Pry Ministair, 10 Downing St, Lady
+                                      3, Joe Bloggs, 8 Myhatt St., Mr.&quot;),           stringsAsFactors=FALSE)
+
+# create Movies table
+# do not add rented_by = c(&quot;Bob Smith&quot;, &quot;Bob Smith&quot;, 
+#                       &quot;Pry Ministair&quot;, &quot;Joe Bloggs&quot;, &quot;Joe Blogss&quot;) here
+movies_table &lt;- data.frame(movieid = 1:5, 
+                           movies = c(&quot;Star Wars&quot;, &quot;Inception&quot;, 
+                                      &quot;Brexit the Movie&quot;, &quot;Fast_ and Furious 6&quot;, 
+                                      &quot;Fast and Furious 7&quot;), 
+                           category_id = c(1, 1, 2, 3, 3))
+
+# create rental table
+rental_table &lt;- data.frame(userid = c(1,1,2,3,3), 
+                           movieid = 1:5)
+
+# create category table 
+category_table &lt;- data.frame(category_id = 1:3,
+                             category_name = c(&quot;Scifi&quot;, &quot;Tragedy&quot;, &quot;Action&quot;), 
+                             stringsAsFactors = FALSE)</code></pre>
 </div>
 <div id="reshaping-data" class="section level3">
 <h3>2. Reshaping data</h3>
@@ -511,16 +540,8 @@ $(document).ready(function () {
 <ol style="list-style-type: lower-alpha">
 <li>Create a subtable of the <code>flights</code> data, that departed before 05:53 on 2013-02-28. How many rows and columns does this subtable have?</li>
 </ol>
-<pre class="r"><code>library(&quot;dplyr&quot;)</code></pre>
-<pre><code>## 
-## Attaching package: 'dplyr'</code></pre>
-<pre><code>## The following objects are masked from 'package:stats':
-## 
-##     filter, lag</code></pre>
-<pre><code>## The following objects are masked from 'package:base':
-## 
-##     intersect, setdiff, setequal, union</code></pre>
-<pre class="r"><code>library(&quot;lubridate&quot;)</code></pre>
+<pre class="r"><code>library(&quot;dplyr&quot;)
+library(&quot;lubridate&quot;)</code></pre>
 <pre><code>## 
 ## Attaching package: 'lubridate'</code></pre>
 <pre><code>## The following object is masked from 'package:base':
@@ -536,11 +557,27 @@ flights$dep_datetime &lt;- ymd_hm(sprintf(&quot;%s-%02d-%02d %02d:%02d&quot;,
                             flights$minute))
 flights_sub &lt;- subset(flights, dep_datetime &lt; ymd_hm(&quot;2013-02-28 05:53&quot;))
 
-nrow(flights_sub)</code></pre>
-<pre><code>## [1] 50996</code></pre>
+cat(&quot;number of row of `flights_sub is`&quot;, nrow(flights_sub))</code></pre>
+<pre><code>## number of row of `flights_sub is` 50996</code></pre>
+<pre class="r"><code>cat(&quot;number of columns of `flights_sub` is&quot;, ncol(flights_sub))</code></pre>
+<pre><code>## number of columns of `flights_sub` is 21</code></pre>
+<pre class="r"><code>flights_sub &lt;- flights %&gt;% subset(year==2013 &amp; # when use subset must sep conditions w `&amp;`
+                                  month==2 &amp;
+                                  day==28 &amp;
+                                  dep_time&lt;553)
+
+# or use dplyr filter
+flights_sub2 &lt;- flights %&gt;% 
+            dplyr::filter(year==2013 &amp;  # when use dplyr::filter can sep with &quot;,&quot;
+                             month==2 &amp; 
+                             day==28 &amp; 
+                             dep_time&lt;553)
+
+# this creates an intermediatary column that we'll have to drop later. not ideal
+flights_sub3 &lt;- flights %&gt;% 
+            dplyr::mutate(., after_2013 = year &gt;2013)</code></pre>
 <ol start="2" style="list-style-type: lower-alpha">
-<li>Merge or join the subtable from a. <code>flights</code> data, to produce a result that includes:<br />
-</li>
+<li>Merge or join the subtable from a. <code>flights</code> data, to produce a result that includes:</li>
 </ol>
 <ul>
 <li>Departure time</li>
@@ -548,26 +585,187 @@ nrow(flights_sub)</code></pre>
 <li>Flight number</li>
 <li>Destination airport name (hint: you will need to get this from the <code>airports</code> table)</li>
 </ul>
-<pre class="r"><code>## your code</code></pre>
+<pre class="r"><code>airports &lt;- read.csv(&quot;nycflights13/airports.csv&quot;)
+mergedinfo &lt;- flights %&gt;% 
+                  left_join(airports, c(&quot;dest&quot; =&quot;faa&quot;))</code></pre>
+<pre><code>## Warning: Column `dest`/`faa` joining factors with different levels,
+## coercing to character vector</code></pre>
+<pre class="r"><code># will produce warning  &quot;Column `dest`/`faa` joining factors with different levels, coercing to character vector&quot;
+# but doesn't matter </code></pre>
 <ol start="3" style="list-style-type: lower-alpha">
 <li><strong>(optional)</strong> For every airline that had flights in the <code>flights</code> data compute the average age of the planes it flew from the entire dataset. Age here will be defined as 2013 minus the <code>year</code> variable from the <code>planes</code> data. Hint: This involves a join operation on <code>tailnum</code>, but also a grouped mean to compute the age (and subtracting 2013, which you can do before or after the computation of the mean).</li>
 </ol>
-<pre class="r"><code>## your code</code></pre>
+<pre class="r"><code>library(dplyr)
+planes &lt;- read.csv(&quot;nycflights13/planes.csv&quot;)
+
+# below attempt failed. 
+# flights %&gt;% 
+#   filtered(!duplicated(tailnum)) %&gt;% 
+#   inner_join(flights, by=&quot;tailnum&quot;) %&gt;% 
+#   mean(2013 - year) %&gt;%
+#   group_by(c(&quot;carrier&quot;))
+   
+
+temp &lt;- flights %&gt;% 
+   filter(!duplicated(tailnum)) %&gt;%
+   select(c(&quot;tailnum&quot;, &quot;carrier&quot;)) %&gt;% 
+   left_join(planes, by=&quot;tailnum&quot;)</code></pre>
+<pre><code>## Warning: Column `tailnum` joining factors with different levels, coercing
+## to character vector</code></pre>
+<pre class="r"><code>airlines &lt;- read.csv(&quot;nycflights13/airlines.csv&quot;)
+
+temp %&gt;% 
+   group_by(carrier) %&gt;%
+   summarise(mean_age = mean(2013 - year, na.rm=TRUE)) %&gt;% 
+   left_join(airlines, by=&quot;carrier&quot;) %&gt;%
+   select(c(&quot;name&quot;, &quot;mean_age&quot;))</code></pre>
+<pre><code>## # A tibble: 16 x 2
+##    name                        mean_age
+##    &lt;fct&gt;                          &lt;dbl&gt;
+##  1 Endeavor Air Inc.               8.29
+##  2 American Airlines Inc.         25.4 
+##  3 Alaska Airlines Inc.            5.16
+##  4 JetBlue Airways                 6.50
+##  5 Delta Air Lines Inc.           17.8 
+##  6 ExpressJet Airlines Inc.       10.7 
+##  7 Frontier Airlines Inc.          5   
+##  8 AirTran Airways Corporation    10.8 
+##  9 Hawaiian Airlines Inc.          1.23
+## 10 Envoy Air                      35.5 
+## 11 SkyWest Airlines Inc.           7.14
+## 12 United Air Lines Inc.          13.1 
+## 13 US Airways Inc.                11.0 
+## 14 Virgin America                  4.29
+## 15 Southwest Airlines Co.         11.0 
+## 16 Mesa Airlines Inc.              9.44</code></pre>
+<pre class="r"><code>temp %&gt;% 
+   group_by(carrier) %&gt;%
+   summarise(mean_age = mean(2013 - year, na.rm=TRUE))</code></pre>
+<pre><code>## # A tibble: 16 x 2
+##    carrier mean_age
+##    &lt;fct&gt;      &lt;dbl&gt;
+##  1 9E          8.29
+##  2 AA         25.4 
+##  3 AS          5.16
+##  4 B6          6.50
+##  5 DL         17.8 
+##  6 EV         10.7 
+##  7 F9          5   
+##  8 FL         10.8 
+##  9 HA          1.23
+## 10 MQ         35.5 
+## 11 OO          7.14
+## 12 UA         13.1 
+## 13 US         11.0 
+## 14 VX          4.29
+## 15 WN         11.0 
+## 16 YV          9.44</code></pre>
+<pre class="r"><code># NT: try this thing using mutate 
+temp %&gt;%
+   group_by(carrier) %&gt;%
+   dplyr::mutate(mean(2013-year, na.rm=TRUE)) %&gt;% 
+   select(c(&quot;mean(2013 - year, na.rm = TRUE)&quot;))</code></pre>
+<pre><code>## Adding missing grouping variables: `carrier`</code></pre>
+<pre><code>## # A tibble: 4,044 x 2
+## # Groups:   carrier [16]
+##    carrier `mean(2013 - year, na.rm = TRUE)`
+##    &lt;fct&gt;                               &lt;dbl&gt;
+##  1 UA                                  13.1 
+##  2 UA                                  13.1 
+##  3 AA                                  25.4 
+##  4 B6                                   6.50
+##  5 DL                                  17.8 
+##  6 UA                                  13.1 
+##  7 B6                                   6.50
+##  8 EV                                  10.7 
+##  9 B6                                   6.50
+## 10 AA                                  25.4 
+## # … with 4,034 more rows</code></pre>
 </div>
 <div id="working-with-sql" class="section level3">
 <h3>3. Working with SQL</h3>
 <ol style="list-style-type: lower-alpha">
 <li>Create a relational dataset in SQLite using the <code>.csv</code> data found <a href="nycflights13/">here</a>. Name each table so that it matches the base filenames of the input data. You can use DB Browser for this, but describe how you did it, but the answer will use the R package <a href="https://cran.r-project.org/web/packages/RSQLite/RSQLite.pdf">RSQLite</a>.</li>
 </ol>
-<p>[your answer]</p>
+<pre class="r"><code>library(RSQLite)
+
+# first read the data
+setwd(&quot;nycflights13/&quot;)
+temp = list.files(pattern=&quot;*.csv&quot;)
+# make names from all the csv files then assign read.csv to each. Write output to Global Environment
+list2env(
+  lapply(setNames(temp, make.names(gsub(&quot;*.csv$&quot;, &quot;&quot;, temp))), 
+         read.csv), envir = .GlobalEnv)</code></pre>
+<pre><code>## &lt;environment: R_GlobalEnv&gt;</code></pre>
+<pre class="r"><code># then connect to db
+library(DBI)
+# Initialize a temporary in memory database and copy a data.frame into it
+con &lt;- dbConnect(RSQLite::SQLite(), &quot;:memory:&quot;)
+
+# create tables
+# TODO use `mapply` for this!!!!
+dbWriteTable(con, &quot;airports&quot;, airports)
+dbWriteTable(con, &quot;airlines&quot;, airlines)
+dbWriteTable(con, &quot;flights&quot;, flights)
+dbWriteTable(con, &quot;planes&quot;, planes)
+dbWriteTable(con, &quot;weather&quot;, weather)
+#sample: dbWriteTable(con, &quot;USArrests&quot;, USArrests)
+dbListTables(con)</code></pre>
+<pre><code>## [1] &quot;airlines&quot; &quot;airports&quot; &quot;flights&quot;  &quot;planes&quot;   &quot;weather&quot;</code></pre>
+<pre class="r"><code>setwd('..')</code></pre>
 <ol start="2" style="list-style-type: lower-alpha">
 <li>Replicate B2 above using an SQL query, including both the command and the output.</li>
 </ol>
-<p>[your answer]</p>
+<pre class="r"><code>#   b)  Merge or join the subtable from a. `flights` data, to produce a result that includes:  
+#   *  Departure time
+#   *  Carrier (two digit code, from `carrier`)
+#   *  Flight number
+#   *  Destination airport name (hint: you will need to get this from the `airports` table)  
+
+# can use dbSendQuery + dbFetch 
+query &lt;- dbSendQuery(con, statement = &quot;SELECT dep_time, carrier, flight, name 
+                                       from flights
+                                       LEFT JOIN airports 
+                                       on flights.dest = airports.faa ;&quot;)
+ d1 &lt;- dbFetch(query, n = 15)
+ dim(d1)</code></pre>
+<pre><code>## [1] 15  4</code></pre>
+<pre class="r"><code> # or can use dbGetQuery
+qoutput &lt;- dbGetQuery(con, statement = &quot;SELECT dep_time, carrier, flight, name 
+                              from flights 
+                              LEFT JOIN airports 
+                              on flights.dest = airports.faa ;&quot;)</code></pre>
+<pre><code>## Warning: Closing open result set, pending rows</code></pre>
 <ol start="3" style="list-style-type: lower-alpha">
-<li><strong>(optional)</strong> Replicate B3 above using an SQL query, including both the command and the output.</li>
+<li><strong>(optional)</strong> Replicate B3 above using an SQL query, including both the command and the output. <em>c) <strong>(optional)</strong> For every airline that had flights in the <code>flights</code> data compute the average age of the planes it flew from the entire dataset. Age here will be defined as 2013 minus the <code>year</code> variable from the <code>planes</code> data. Hint: This involves a join operation on <code>tailnum</code>, but also a grouped mean to compute the age (and subtracting 2013, which you can do before or after the computation of the mean).</em></li>
 </ol>
-<p>[your answer]</p>
+<pre class="r"><code># remember to use SELECT DISTINCt for correct number
+# I used AVG(2013-year) which is the same with 2013 - (AVG(planes.year)) apparently
+tempsql &lt;- dbGetQuery(con, &quot;SELECT carrier, AVG(2013-year) AS avg_age FROM 
+                  (SELECT DISTINCT tailnum, carrier FROM flights) AS fl
+                   LEFT OUTER JOIN planes as pl ON fl.tailnum = pl.tailnum 
+                  GROUP BY fl.carrier &quot;)
+
+tempsql</code></pre>
+<pre><code>##    carrier   avg_age
+## 1       9E  8.287129
+## 2       AA 25.402439
+## 3       AS  5.156627
+## 4       B6  6.497326
+## 5       DL 17.671593
+## 6       EV 10.558442
+## 7       F9  5.000000
+## 8       FL 10.794643
+## 9       HA  1.230769
+## 10      MQ 35.500000
+## 11      OO  7.142857
+## 12      UA 13.050934
+## 13      US 10.996283
+## 14      VX  4.288462
+## 15      WN 11.005272
+## 16      YV  9.438596</code></pre>
+<pre class="r"><code>dbDisconnect(con)</code></pre>
+<p>[ANSWER ENDS]</p>
 </div>
 </div>
 </div>
